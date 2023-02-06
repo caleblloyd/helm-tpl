@@ -1,0 +1,20 @@
+pod:
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: nginx
+  spec:
+    containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+      - containerPort: 80
+
+patchPod:
+- op: replace
+  path: /spec/containers/0/image
+  value: nginx:alpine
+- op: add
+  path: /spec/containers/0/ports/-
+  value:
+    containerPort: 8080
