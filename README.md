@@ -14,7 +14,7 @@ Call the `jsonpatch` named template:
 
 ## Example
 
-**templates/values.yaml:**
+**values.yaml:**
 
 ```yaml
 pod:
