@@ -1,0 +1,10 @@
+[
+    {
+        "comment": "html entities",
+        "doc": {">": ">", "&": "&"},
+        "patch": [
+            {"op": "add", "path": "/<", "value": "<"}
+        ],
+        "expected": {">": ">", "&": "&", "<": "<"}
+    }
+]
