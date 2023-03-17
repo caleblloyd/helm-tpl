@@ -27,6 +27,10 @@ func TestTests(t *testing.T) {
 	testFile(t, "tests.json")
 }
 
+func TestHelm(t *testing.T) {
+	testFile(t, "helm.json")
+}
+
 func testFile(t *testing.T, file string) {
 	testBytes, err := os.ReadFile(file)
 	if err != nil {

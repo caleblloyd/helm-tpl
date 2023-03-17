@@ -1,8 +1,15 @@
-# helm-jsonpatch-tpl
+# helm-tpl
+
+Various helm templates to provide useful functions in helm charts.
+
+- [jsonpatch](#jsonpatch)
+- [toPrettyRawJson](#toPrettyRawJson)
+
+## jsonpatch
 
 [JSON Patch](https://jsonpatch.com/) in a [Helm Named Template](https://helm.sh/docs/chart_template_guide/named_templates/)
 
-## Usage
+### Usage
 
 Copy `_jsonpatch.tpl` to your helm chart `templates/` directory
 
@@ -12,7 +19,7 @@ Call the `jsonpatch` named template:
   - `patch`: `[]interface{}` valid [JSON Patch](https://jsonpatch.com/) document
 - output: JSON string with the patched json result
 
-## Example
+### Example
 
 **values.yaml:**
 
@@ -63,4 +70,12 @@ spec:
     - containerPort: 8080
 ```
 
-Try it by running `./example/template.sh`
+Try it by running `./jsonpatch/example/template.sh`
+
+## toPrettyRawJson
+
+Copy `_toPrettyRawJson.tpl` to your helm chart `templates/` directory
+
+Pretty prints using `toPrettyJson` and unescapes HTML entities for `&`, `<`, and `>`
+
+Try it by running `./toPrettyRawJson/example/template.sh`

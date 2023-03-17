@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"helm.sh/helm/v3/pkg/chart"
@@ -94,14 +95,17 @@ func jsonPatch(doc, patch interface{}) (string, error) {
 		Doc:   doc,
 		Patch: patch,
 	}
-	jpBytes, err := json.Marshal(jp)
+	buf := &bytes.Buffer{}
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(jp)
 	if err != nil {
 		return "", err
 	}
 
 	values, err := chartutil.CoalesceValues(helmChart, chartutil.Values{
 		"Values": chartutil.Values{
-			"jsonpatch": string(jpBytes),
+			"jsonpatch": buf.String(),
 		},
 	})
 
