@@ -2,8 +2,8 @@
 
 Various helm templates to provide useful functions in helm charts.
 
-- [jsonpatch](#jsonpatch)
-- [toPrettyRawJson](#toPrettyRawJson)
+- jsonpatch
+- toPrettyRawJson
 
 ## jsonpatch
 
