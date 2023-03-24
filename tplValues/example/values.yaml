@@ -1,0 +1,34 @@
+a:
+  tpl: >
+    {{- printf "a" -}}
+b:
+  tpl: >
+    {{- printf "b" | quote -}}
+c:
+- c
+- tpl: >
+    {{- printf "c" -}}
+d:
+  tplSpread: |-
+    {{ printf "e: e" }}
+    {{ printf "f: f" }}
+g:
+  - h
+  - tplSpread: |-
+      - {{ printf "i" }}
+      - {{ printf "j" }}
+  - k
+  - tplSpread: >
+      ["l", "m"]
+o:
+  p:
+    tpl: q
+  r:
+    tplSpread: |-
+      s: t
+      u: v
+  w:
+    - x
+    - tplSpread: >
+        ["y"]
+    - tpl: z

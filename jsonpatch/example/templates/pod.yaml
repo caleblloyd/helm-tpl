@@ -1,1 +1,1 @@
-{{ include "jsonpatch" (dict "doc" .Values.pod "patch" .Values.patchPod) | fromJson | toYaml }}
+{{ get (include "jsonpatch" (dict "doc" .Values.pod "patch" .Values.patchPod) | fromJson) "doc" | toYaml }}
