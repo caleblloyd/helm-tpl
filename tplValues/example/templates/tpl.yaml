@@ -1,1 +1,1 @@
-{{ dict "patches" (get (include "tplValues" (dict "doc" .Values "ctx" .) | fromJson) "doc") | toYaml }}
+{{ dict "patches" (get (include "tplYaml" (dict "doc" .Values "ctx" .) | fromJson) "doc") | toYaml }}

@@ -1,34 +1,34 @@
 a:
-  tpl: >
+  tplYaml: >
     {{- printf "a" -}}
 b:
-  tpl: >
+  tplYaml: >
     {{- printf "b" | quote -}}
 c:
 - c
-- tpl: >
+- tplYaml: >
     {{- printf "c" -}}
 d:
-  tplSpread: |-
+  tplYamlSpread: |-
     {{ printf "e: e" }}
     {{ printf "f: f" }}
 g:
   - h
-  - tplSpread: |-
+  - tplYamlSpread: |-
       - {{ printf "i" }}
       - {{ printf "j" }}
   - k
-  - tplSpread: >
+  - tplYamlSpread: >
       ["l", "m"]
 o:
   p:
-    tpl: q
+    tplYaml: q
   r:
-    tplSpread: |-
+    tplYamlSpread: |-
       s: t
       u: v
   w:
     - x
-    - tplSpread: >
+    - tplYamlSpread: >
         ["y"]
-    - tpl: z
+    - tplYaml: z

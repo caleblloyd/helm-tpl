@@ -1,5 +1,5 @@
 {{- /*
-tplValues
+tplYaml
 input: map with 2 keys:
 - doc: interface{}
 - ctx: context to pass to tpl function
@@ -16,13 +16,13 @@ maps matching the follow syntax will be templated, then spread into the parent m
   tplSpread: string
 }
 */}}
-{{- define "tplValues" -}}
-  {{- $patch := get (include "tplValuesItr" (dict "ctx" .ctx "parentKind" "" "parentPath" "" "path" "/" "value" .doc) | fromJson) "patch" -}}
+{{- define "tplYaml" -}}
+  {{- $patch := get (include "tplYamlItr" (dict "ctx" .ctx "parentKind" "" "parentPath" "" "path" "/" "value" .doc) | fromJson) "patch" -}}
   {{- include "jsonpatch" (dict "doc" .doc "patch" $patch) -}}
 {{- end -}}
 
 {{- /*
-tplValuesItr
+tplYamlItr
 input: map with 4 keys:
 - path: string JSONPath to current element
 - parentKind: string kind of parent element
@@ -32,7 +32,7 @@ input: map with 4 keys:
 output: JSON encoded map with 1 key:
 - patch: list of patches to apply in order to template
 */}}
-{{- define "tplValuesItr" -}}
+{{- define "tplYamlItr" -}}
   {{- $params := . -}}
   {{- $kind := kindOf $params.value -}}
   {{- $patch := list -}}
@@ -49,7 +49,7 @@ output: JSON encoded map with 1 key:
     {{- $iAdj := 0 -}}
     {{- range $i, $v := $params.value -}}
       {{- $iPath := printf "%s/%d" $joinPath (add $i $iAdj) -}}
-      {{- $itrPatch := get (include "tplValuesItr" (dict "ctx" $params.ctx "parentKind" $kind "parentPath" $params.path "path" $iPath "value" $v) | fromJson) "patch" -}}
+      {{- $itrPatch := get (include "tplYamlItr" (dict "ctx" $params.ctx "parentKind" $kind "parentPath" $params.path "path" $iPath "value" $v) | fromJson) "patch" -}}
       {{- $itrLen := len $itrPatch -}}
       {{- if gt $itrLen 0 -}}
         {{- $patch = concat $patch $itrPatch -}}
@@ -100,7 +100,7 @@ output: JSON encoded map with 1 key:
           {{- $kPath := replace "~" "~0" $k -}}
           {{- $kPath = replace "/" "~1" $kPath -}}
           {{- $kPath = printf "%s/%s" $joinPath $kPath -}}
-          {{- $itrPatch := get (include "tplValuesItr" (dict "ctx" $params.ctx "parentKind" $kind "parentPath" $params.path "path" $kPath "value" $v) | fromJson) "patch" -}}
+          {{- $itrPatch := get (include "tplYamlItr" (dict "ctx" $params.ctx "parentKind" $kind "parentPath" $params.path "path" $kPath "value" $v) | fromJson) "patch" -}}
           {{- if gt (len $itrPatch) 0 -}}
             {{- $patch = concat $patch $itrPatch -}}
           {{- end -}}
