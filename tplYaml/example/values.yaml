@@ -1,0 +1,24 @@
+name: nginx
+ports:
+  http: 80
+  https: 443
+
+pod:
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name:
+      tplYaml: >-
+        {{ .Values.name | quote }}
+  spec:
+    containers:
+    - name:
+        tplYaml: >-
+          {{ .Values.name | quote }}
+      image: nginx:latest
+      ports:
+      - tplYamlSpread: |-
+          {{- range $k, $v := .Values.ports }}
+          - name: {{ $k | quote }}
+            containerPort: {{ $v }}
+          {{- end }}

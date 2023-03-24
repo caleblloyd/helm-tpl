@@ -6,14 +6,14 @@ input: map with 2 keys:
 output: JSON encoded map with 1 key:
 - doc: interface{} with any keys called tpl or tplSpread values templated and replaced
 
-maps matching the following syntax will be templated
+maps matching the following syntax will be templated and parsed as YAML
 {
-  tpl: string
+  tplYaml: string
 }
 
-maps matching the follow syntax will be templated, then spread into the parent map/slice
+maps matching the follow syntax will be templated, parsed as YAML, and spread into the parent map/slice
 {
-  tplSpread: string
+  tplYamlSpread: string
 }
 */}}
 {{- define "tplYaml" -}}
@@ -53,21 +53,21 @@ output: JSON encoded map with 1 key:
       {{- $itrLen := len $itrPatch -}}
       {{- if gt $itrLen 0 -}}
         {{- $patch = concat $patch $itrPatch -}}
-        {{- if gt $itrLen 2 -}}
+        {{- if eq (get (index $itrPatch 0) "op") "remove" -}}
           {{- $iAdj = add $iAdj (sub $itrLen 2) -}}
         {{- end -}}
       {{- end -}}
     {{- end -}}
 
   {{- else if eq $kind "map" -}}
-    {{- if and (eq (len $params.value) 1) (or (hasKey $params.value "tpl") (hasKey $params.value "tplSpread")) -}}
-      {{- $tpl := get $params.value "tpl" -}}
+    {{- if and (eq (len $params.value) 1) (or (hasKey $params.value "tplYaml") (hasKey $params.value "tplYamlSpread")) -}}
+      {{- $tpl := get $params.value "tplYaml" -}}
       {{- $spread := false -}}
-      {{- if hasKey $params.value "tplSpread" -}}
+      {{- if hasKey $params.value "tplYamlSpread" -}}
         {{- if eq $params.path "/" -}}
           {{- fail "cannot tplSpread on root object" -}}
         {{- end -}}
-        {{- $tpl = get $params.value "tplSpread" -}}
+        {{- $tpl = get $params.value "tplYamlSpread" -}}
         {{- $spread = true -}}
       {{- end -}}
 
@@ -78,11 +78,13 @@ output: JSON encoded map with 1 key:
         {{- $patch = append $patch (dict "op" "replace" "path" $params.path "value" $res) -}}
       {{- else -}}
         {{- $resKind := kindOf $res -}}
-        {{- if ne $resKind $params.parentKind -}}
-           {{- fail (cat "can only tplSpread slice onto a slice or map onto a map; attempted to spread" $resKind "on" $params.parentKind "at path" $params.path) -}}
+        {{- if and (ne $resKind "invalid") (ne $resKind $params.parentKind) -}}
+           {{- fail (cat "can only tplYamlSpread slice onto a slice or map onto a map; attempted to spread" $resKind "on" $params.parentKind "at path" $params.path) -}}
         {{- end -}}
           {{- $patch = append $patch (dict "op" "remove" "path" $params.path) -}}
-        {{- if eq $resKind "slice" -}}
+        {{- if eq $resKind "invalid" -}}
+          {{- /* no-op */ -}}
+        {{- else if eq $resKind "slice" -}}
           {{- range $v := reverse $res -}}
             {{- $patch = append $patch (dict "op" "add" "path" $params.path "value" $v) -}}
           {{- end -}}
@@ -96,15 +98,15 @@ output: JSON encoded map with 1 key:
         {{- end -}}
       {{- end -}}
     {{- else -}}
-       {{- range $k, $v := $params.value -}}
-          {{- $kPath := replace "~" "~0" $k -}}
-          {{- $kPath = replace "/" "~1" $kPath -}}
-          {{- $kPath = printf "%s/%s" $joinPath $kPath -}}
-          {{- $itrPatch := get (include "tplYamlItr" (dict "ctx" $params.ctx "parentKind" $kind "parentPath" $params.path "path" $kPath "value" $v) | fromJson) "patch" -}}
-          {{- if gt (len $itrPatch) 0 -}}
-            {{- $patch = concat $patch $itrPatch -}}
-          {{- end -}}
-       {{- end -}}
+      {{- range $k, $v := $params.value -}}
+        {{- $kPath := replace "~" "~0" $k -}}
+        {{- $kPath = replace "/" "~1" $kPath -}}
+        {{- $kPath = printf "%s/%s" $joinPath $kPath -}}
+        {{- $itrPatch := get (include "tplYamlItr" (dict "ctx" $params.ctx "parentKind" $kind "parentPath" $params.path "path" $kPath "value" $v) | fromJson) "patch" -}}
+        {{- if gt (len $itrPatch) 0 -}}
+          {{- $patch = concat $patch $itrPatch -}}
+        {{- end -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
   
