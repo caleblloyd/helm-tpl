@@ -1,1 +1,1 @@
-{{ include "jsonpatch" (fromJson .Values.jsonpatch) }}
+{{ get (include "jsonpatch" (fromJson .Values.jsonpatch) | fromJson) "doc" | toJson }}
