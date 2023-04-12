@@ -108,16 +108,16 @@ pod:
   kind: Pod
   metadata:
     name:
-      tplYaml: >-
+      $tplYaml: >-
         {{ .Values.name | quote }}
   spec:
     containers:
     - name:
-        tplYaml: >-
+        $tplYaml: >-
           {{ .Values.name | quote }}
       image: nginx:latest
       ports:
-      - tplYamlSpread: |-
+      - $tplYamlSpread: |-
           {{- range $k, $v := .Values.ports }}
           - name: {{ $k | quote }}
             containerPort: {{ $v }}
